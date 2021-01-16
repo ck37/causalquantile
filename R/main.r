@@ -82,13 +82,17 @@ tmle <- function(y, t, Q, g, q){
   n <- length(y)
   D  <- function(y, w, chiq){
     #1 / g * ((y <= chiq) - rowSums((Q <= chiq) * w))
+    # CK edit:
     1 / g * ((!is.na(y) & y <= chiq) - rowSums((Q <= chiq) * w))
   }
   
   w  <- matrix(1/dim(Q)[2], ncol = dim(Q)[2], nrow = n)
   h <- t
+  
+  # CK edit:
   #chiq <- .compute.quantile(Q, w, q, range(y))
   chiq <- .compute.quantile(Q, w, q, range(y, na.rm = TRUE))
+  
   Do <- D(y, w, chiq)
   Dq <- D(Q, w, chiq)
   iter     <- 1
@@ -106,8 +110,11 @@ tmle <- function(y, t, Q, g, q){
     }
     eps <- optim(par = 0, loglik, gr = est.eq, method = 'BFGS')$par
     w <- exp(eps * Dq) * w / rowSums(exp(eps * Dq) * w)
+    
+    # CK edit:
     #chiq <- .compute.quantile(Q, w, q, range(y))
     chiq <- .compute.quantile(Q, w, q, range(y, na.rm = TRUE))
+    
     Do <- D(y, w, chiq)
     Dq <- D(Q, w, chiq)
     iter <- iter + 1
