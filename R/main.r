@@ -81,8 +81,10 @@ tmle <- function(y, t, Q, g, q){
 
   n <- length(y)
   D  <- function(y, w, chiq){
-    1 / g * ((y <= chiq) - rowSums((Q <= chiq) * w))
+    #1 / g * ((y <= chiq) - rowSums((Q <= chiq) * w))
+    1 / g * ((!is.na(y) & y <= chiq) - rowSums((Q <= chiq) * w))
   }
+  
   w  <- matrix(1/dim(Q)[2], ncol = dim(Q)[2], nrow = n)
   h <- t
   #chiq <- .compute.quantile(Q, w, q, range(y))
