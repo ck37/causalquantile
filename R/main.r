@@ -81,8 +81,8 @@ tmle <- function(y, t, Q, g, q){
 
   n <- length(y)
   D  <- function(y, w, chiq){
-    #1 / g * ((y <= chiq) - rowSums((Q <= chiq) * w))
     # CK edit:
+    #1 / g * ((y <= chiq) - rowSums((Q <= chiq) * w))
     1 / g * ((!is.na(y) & y <= chiq) - rowSums((Q <= chiq) * w))
   }
   
