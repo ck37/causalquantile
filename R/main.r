@@ -22,7 +22,7 @@ KSdatagen <- function(n) {
 .trim <- function(x) pmax(x, 1e-10)
 
 .compute.quantile <- function(Q, w, q, r) {
-  F <- function(y)sapply(y, function(x)mean(rowSums((Q <= x) * w)))
+  F <- function(y)sapply(y, function(x) mean(rowSums((Q <= x) * w)))
   inv <- function(qq){
     froot <- function(x) (F(x) - qq)
     uniroot(froot, r, extendInt = 'yes')$root
@@ -85,7 +85,8 @@ tmle <- function(y, t, Q, g, q){
   }
   w  <- matrix(1/dim(Q)[2], ncol = dim(Q)[2], nrow = n)
   h <- t
-  chiq <- .compute.quantile(Q, w, q, range(y))
+  #chiq <- .compute.quantile(Q, w, q, range(y))
+  chiq <- .compute.quantile(Q, w, q, range(y, na.rm = TRUE))
   Do <- D(y, w, chiq)
   Dq <- D(Q, w, chiq)
   iter     <- 1
@@ -103,7 +104,8 @@ tmle <- function(y, t, Q, g, q){
     }
     eps <- optim(par = 0, loglik, gr = est.eq, method = 'BFGS')$par
     w <- exp(eps * Dq) * w / rowSums(exp(eps * Dq) * w)
-    chiq <- .compute.quantile(Q, w, q, range(y))
+    #chiq <- .compute.quantile(Q, w, q, range(y))
+    chiq <- .compute.quantile(Q, w, q, range(y, na.rm = TRUE))
     Do <- D(y, w, chiq)
     Dq <- D(Q, w, chiq)
     iter <- iter + 1
